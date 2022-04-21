@@ -2,7 +2,6 @@ import csv
 from pprint import pprint
 from datetime import datetime
 import matplotlib.pyplot as plt
-from numpy import asscalar
 
 with open('rent_revenue_data.csv', newline='') as f:
     reader = csv.reader(f)
