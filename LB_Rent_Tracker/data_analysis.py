@@ -49,6 +49,8 @@ for val, name in zip(rent_dict.values(), rent_dict.keys()):
 
 cumulated_revenue_by_rent_time_from_first={}
 for val, name in zip(rent_dict.values(), rent_dict.keys()):
+    # schneidet somit die ältesten 7 Items ab, da nach diesen über 7 Monate nichts kommt
+    # Somit wird das Diagramm sehr viel übersichtlicher.
     if name == "MP7 | Fade (Factory New)":
         break
     for entry in reversed(val):
