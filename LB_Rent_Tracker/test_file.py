@@ -6,7 +6,7 @@ test_lst.append(['15827543', '26/3/2022 2:49 PM', '★ Talon Knife | Stained (Mi
 df = pd.DataFrame(test_lst)
 df.columns = ['ID', 'Date', 'Item', 'Revenue']
 df.to_csv('rent_revenue_data.csv')
-"""
+
 
 
 import csv
@@ -39,3 +39,21 @@ from data_analysis import *
 
 plt.plot(xs, ys)
 plt.show()
+"""
+
+dt = {}
+lst = ['a','b','c','d','e','f','g']
+
+for number, letter in enumerate(lst):
+    try:
+        dt[letter]["test"] += number
+    except:
+        dt[letter] = {"test": number}
+
+for number, letter in enumerate(lst):
+    try:
+        dt[letter]["test"] += number
+    except:
+        dt[letter] = {"test": number}
+
+print(dt)

@@ -3,7 +3,7 @@ from pprint import pprint
 from datetime import datetime
 import matplotlib.pyplot as plt
 
-with open('rent_revenue_data.csv', newline='') as f:
+with open('LB_Rent_Tracker/rent_revenue_data.csv', newline='') as f:
     reader = csv.reader(f)
     data = list(reader)
 
@@ -13,6 +13,11 @@ data.pop(0)
 
 # in rent_dict wird ein Dictionary erstellt, welches für jeden Skin (key) eine Liste
 # der Renevue Entries beinhaltet (tuple aus tag und betrag)
+# reverse für alt nach neu bei visualisierung, kann aber einfach ausgestellt werden
+reverse = True
+if reverse == True: data.reverse()
+
+print(data)
 rent_dict = {}
 for revenue_entry in data:
     try:
@@ -39,7 +44,8 @@ def datediff(d1, d2):
 # den Vergangen Tagen beinhaltet
 cumulated_revenue_by_rent_time={}
 for val, name in zip(rent_dict.values(), rent_dict.keys()):
-    for entry in reversed(val):
+    if reverse == False: val.reverse()
+    for entry in val:
         try:
             cumulated_revenue_by_rent_time[name]["revenue_history"] = cumulated_revenue_by_rent_time[name]["revenue_history"] + [(datediff(cumulated_revenue_by_rent_time[name]["start"], entry[0].split(" ")[0]), round(cumulated_revenue_by_rent_time[name]["revenue_history"][-1][-1] + float(entry[1]), 2))]
         except Exception as e:
@@ -47,17 +53,22 @@ for val, name in zip(rent_dict.values(), rent_dict.keys()):
             cumulated_revenue_by_rent_time[name] = {"start": entry[0].split(" ")[0], "revenue_history":[(0,round(float(entry[1]), 2))]}
 
 cumulated_revenue_by_rent_time_from_first={}
+start = False
 for val, name in zip(rent_dict.values(), rent_dict.keys()):
     # schneidet somit die ältesten 7 Items ab, da nach diesen über 7 Monate nichts kommt
     # Somit wird das Diagramm sehr viel übersichtlicher.
+    # im Reverse Fall so, ansonsten break nach dem Namen.
     if name == "MP7 | Fade (Factory New)":
-        break
-    for entry in reversed(val):
-        try:
-            cumulated_revenue_by_rent_time_from_first[name]["revenue_history"] = cumulated_revenue_by_rent_time_from_first[name]["revenue_history"] + [(datediff("18/01/2021", entry[0].split(" ")[0]), round(cumulated_revenue_by_rent_time_from_first[name]["revenue_history"][-1][-1] + float(entry[1]), 2))]
-        except Exception as e:
-            print(e)
-            cumulated_revenue_by_rent_time_from_first[name] = {"start": entry[0].split(" ")[0], "revenue_history":[(datediff("18/01/2021", entry[0].split(" ")[0]),round(float(entry[1]), 2))]}
+        start = True
+        continue
+    if start == True:
+        if reverse == False: val.reverse()
+        for entry in val:
+            try:
+                cumulated_revenue_by_rent_time_from_first[name]["revenue_history"] = cumulated_revenue_by_rent_time_from_first[name]["revenue_history"] + [(datediff("18/01/2021", entry[0].split(" ")[0]), round(cumulated_revenue_by_rent_time_from_first[name]["revenue_history"][-1][-1] + float(entry[1]), 2))]
+            except Exception as e:
+                print(e)
+                cumulated_revenue_by_rent_time_from_first[name] = {"start": entry[0].split(" ")[0], "revenue_history":[(datediff("18/01/2021", entry[0].split(" ")[0]),round(float(entry[1]), 2))]}
 
 #print(cumulated_revenue_by_rent_time["★ Karambit | Autotronic (Field-Tested)"])
 
@@ -70,5 +81,6 @@ if __name__ == "__main__":
     pprint(revenue_by_skin)
     print(rent_dict.keys())
     for item in cumulated_revenue_by_rent_time_from_first.values():
-        print(item)
+        #print(item)
         pass
+    pass
