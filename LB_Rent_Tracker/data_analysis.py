@@ -3,7 +3,7 @@ from pprint import pprint
 from datetime import datetime
 import matplotlib.pyplot as plt
 
-with open('LB_Rent_Tracker/rent_revenue_data.csv', newline='') as f:
+with open('rent_revenue_data.csv', newline='') as f:
     reader = csv.reader(f)
     data = list(reader)
 
@@ -83,4 +83,7 @@ if __name__ == "__main__":
     for item in cumulated_revenue_by_rent_time_from_first.values():
         #print(item)
         pass
+    pass
+
+def analyse_revenue_by_type():
     pass

@@ -39,7 +39,7 @@ from data_analysis import *
 
 plt.plot(xs, ys)
 plt.show()
-"""
+
 
 dt = {}
 lst = ['a','b','c','d','e','f','g']
@@ -56,4 +56,15 @@ for number, letter in enumerate(lst):
     except:
         dt[letter] = {"test": number}
 
-print(dt)
+print(dt)"""
+
+import csv
+
+with open('test_csv.csv', 'a') as file:
+    reader = list(csv.reader(file))
+    reader.insert(1, [1,2,3,4])
+
+with open('test_csv.csv', 'a') as update:
+    writer = csv.writer(update)
+    for line in reader:
+        writer.writerow(line)
