@@ -17,13 +17,14 @@ data.pop(0)
 reverse = True
 if reverse == True: data.reverse()
 
-print(data)
+#print(data)
 rent_dict = {}
+# rent_dict has the name of an item as the key and a list of tuples (date, revenue) as value
 for revenue_entry in data:
     try:
         rent_dict[revenue_entry[2]] = rent_dict[revenue_entry[2]] + [(revenue_entry[1], revenue_entry[3])]
     except Exception as e:
-        print(e)
+        #print(e)
         rent_dict[revenue_entry[2]] = [(revenue_entry[1], revenue_entry[3])]
 
 # revenue_by_skin ist eine Liste für die summierte Einnahme pro Skin
@@ -49,10 +50,13 @@ for val, name in zip(rent_dict.values(), rent_dict.keys()):
         try:
             cumulated_revenue_by_rent_time[name]["revenue_history"] = cumulated_revenue_by_rent_time[name]["revenue_history"] + [(datediff(cumulated_revenue_by_rent_time[name]["start"], entry[0].split(" ")[0]), round(cumulated_revenue_by_rent_time[name]["revenue_history"][-1][-1] + float(entry[1]), 2))]
         except Exception as e:
-            print(e)
+            #print(e)
             cumulated_revenue_by_rent_time[name] = {"start": entry[0].split(" ")[0], "revenue_history":[(0,round(float(entry[1]), 2))]}
 
 cumulated_revenue_by_rent_time_from_first={}
+# cumulated_revenue_by_rent_time_from_first ist ein dictionary, welches für jedes Item die gesamte Revenue abhängig
+# von der Anzahl an vergangen Tagen zu dem ältesten vermietungseintrag aller skins speichert. Die ältesten
+# 7 skins werden ignoriert.
 start = False
 for val, name in zip(rent_dict.values(), rent_dict.keys()):
     # schneidet somit die ältesten 7 Items ab, da nach diesen über 7 Monate nichts kommt
@@ -60,14 +64,15 @@ for val, name in zip(rent_dict.values(), rent_dict.keys()):
     # im Reverse Fall so, ansonsten break nach dem Namen.
     if name == "MP7 | Fade (Factory New)":
         start = True
-        continue
+        if reverse: continue
+        else: break
     if start == True:
         if reverse == False: val.reverse()
         for entry in val:
             try:
                 cumulated_revenue_by_rent_time_from_first[name]["revenue_history"] = cumulated_revenue_by_rent_time_from_first[name]["revenue_history"] + [(datediff("18/01/2021", entry[0].split(" ")[0]), round(cumulated_revenue_by_rent_time_from_first[name]["revenue_history"][-1][-1] + float(entry[1]), 2))]
             except Exception as e:
-                print(e)
+                #print(e)
                 cumulated_revenue_by_rent_time_from_first[name] = {"start": entry[0].split(" ")[0], "revenue_history":[(datediff("18/01/2021", entry[0].split(" ")[0]),round(float(entry[1]), 2))]}
 
 #print(cumulated_revenue_by_rent_time["★ Karambit | Autotronic (Field-Tested)"])
@@ -76,21 +81,24 @@ xs = [x for x,_ in cumulated_revenue_by_rent_time["★ Karambit | Autotronic (Fi
 ys = [y for _,y in cumulated_revenue_by_rent_time["★ Karambit | Autotronic (Field-Tested)"]["revenue_history"]]
 
 
-def analyse_revenue_by_type():
-    """ Returns a dictionary with the knife type as the key and the revenue of the knife type as the value"""
+def analyse_revenue_by_type(includes_KGD: bool = True):
+    """ Returns a dictionary with the knife type as the key and the revenue of the knife type as the value.
+    includes_KGD decides whether the Karambit Gamma Doppler is part of the used Data Set as its rentting times are far off the mean"""
     # WARNING BAYONET IN M9-BAYONET
     types = ["Karambit", "★ Bayonet", "Huntsman", "M9 Bayonet", "Skeleton", "Stiletto"]
     revenue_by_type = [{type: round(sum(skin_revenue[1] for skin_revenue in revenue_by_skin if type in skin_revenue[0]), 2)} for type in types]
-    pprint(revenue_by_type)
+    if includes_KGD == False: revenue_by_type[0]["Karambit"] -= revenue_by_skin[0][1] # Fehler, falls KGP nicht das Item mit der höchsten revenue ist.
+
+    return revenue_by_type
 
 
 if __name__ == "__main__":
-    #plt.plot(xs, ys)
-    #plt.show()
-    pprint(revenue_by_skin)
+    plt.plot(xs, ys)
+    plt.show()
+    #pprint(revenue_by_skin)
     #print(rent_dict.keys())
     for item in cumulated_revenue_by_rent_time_from_first.values():
-        #print(item)
+        print(item)
         pass
     pass
-    analyse_revenue_by_type()
+    #pprint(analyse_revenue_by_type())
