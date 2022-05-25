@@ -60,11 +60,14 @@ print(dt)"""
 
 import csv
 
-with open('test_csv.csv', 'a') as file:
+with open('test_csv.csv', 'r') as file:
     reader = list(csv.reader(file))
-    reader.insert(1, [1,2,3,4])
+    for line in reader:
+        line[-1] = line[-1].strip("$")
 
-with open('test_csv.csv', 'a') as update:
+with open('test_csv.csv', 'w') as update:
     writer = csv.writer(update)
     for line in reader:
         writer.writerow(line)
+
+print(float("$0.4".strip("$")))

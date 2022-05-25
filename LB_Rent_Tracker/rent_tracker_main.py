@@ -32,7 +32,7 @@ def get_new_data():
             #id = id_element.text
             date = driver.find_element_by_xpath(f"//*[@id=\"app\"]/div[1]/div/div/div/div/div[2]/div/div[5]/div/div/div/div[1]/div/table/tbody/tr[{i}]/td[2]").text
             item = driver.find_element_by_xpath(f"//*[@id=\"app\"]/div[1]/div/div/div/div/div[2]/div/div[5]/div/div/div/div[1]/div/table/tbody/tr[{i}]/td[3]").text
-            revenue = driver.find_element_by_xpath(f"//*[@id=\"app\"]/div[1]/div/div/div/div/div[2]/div/div[5]/div/div/div/div[1]/div/table/tbody/tr[{i}]/td[4]").text
+            revenue = driver.find_element_by_xpath(f"//*[@id=\"app\"]/div[1]/div/div/div/div/div[2]/div/div[5]/div/div/div/div[1]/div/table/tbody/tr[{i}]/td[4]").text.strip("$")
             new_data = [id, date, item, revenue]
             print(new_data)
             rent_revenue_data.append(new_data)
@@ -75,7 +75,7 @@ def update_data():
             #id = id_element.text
             date = driver.find_element_by_xpath(f"//*[@id=\"app\"]/div[1]/div/div/div/div/div[2]/div/div[5]/div/div/div/div[1]/div/table/tbody/tr[{i}]/td[2]").text
             item = driver.find_element_by_xpath(f"//*[@id=\"app\"]/div[1]/div/div/div/div/div[2]/div/div[5]/div/div/div/div[1]/div/table/tbody/tr[{i}]/td[3]").text
-            revenue = driver.find_element_by_xpath(f"//*[@id=\"app\"]/div[1]/div/div/div/div/div[2]/div/div[5]/div/div/div/div[1]/div/table/tbody/tr[{i}]/td[4]").text
+            revenue = driver.find_element_by_xpath(f"//*[@id=\"app\"]/div[1]/div/div/div/div/div[2]/div/div[5]/div/div/div/div[1]/div/table/tbody/tr[{i}]/td[4]").text.strip("$")
             new_data = [id, date, item, revenue]
             print(new_data)
 

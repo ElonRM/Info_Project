@@ -75,15 +75,22 @@ for val, name in zip(rent_dict.values(), rent_dict.keys()):
 xs = [x for x,_ in cumulated_revenue_by_rent_time["★ Karambit | Autotronic (Field-Tested)"]["revenue_history"]]
 ys = [y for _,y in cumulated_revenue_by_rent_time["★ Karambit | Autotronic (Field-Tested)"]["revenue_history"]]
 
+
+def analyse_revenue_by_type():
+    """ Returns a dictionary with the knife type as the key and the revenue of the knife type as the value"""
+    # WARNING BAYONET IN M9-BAYONET
+    types = ["Karambit", "★ Bayonet", "Huntsman", "M9 Bayonet", "Skeleton", "Stiletto"]
+    revenue_by_type = [{type: round(sum(skin_revenue[1] for skin_revenue in revenue_by_skin if type in skin_revenue[0]), 2)} for type in types]
+    pprint(revenue_by_type)
+
+
 if __name__ == "__main__":
     #plt.plot(xs, ys)
     #plt.show()
     pprint(revenue_by_skin)
-    print(rent_dict.keys())
+    #print(rent_dict.keys())
     for item in cumulated_revenue_by_rent_time_from_first.values():
         #print(item)
         pass
     pass
-
-def analyse_revenue_by_type():
-    pass
+    analyse_revenue_by_type()
