@@ -101,4 +101,4 @@ if __name__ == "__main__":
         print(item)
         pass
     pass
-    #pprint(analyse_revenue_by_type())
+    # pprint(analyse_revenue_by_type())
