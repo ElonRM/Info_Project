@@ -21,6 +21,7 @@ if reverse == True: data.reverse()
 rent_dict = {}
 # rent_dict has the name of an item as the key and a list of tuples (date, revenue) as value
 for revenue_entry in data:
+    # revenue_entry ist ein Liste aus [ID, DATE, ITEM, REVENUE]
     try:
         rent_dict[revenue_entry[2]] = rent_dict[revenue_entry[2]] + [(revenue_entry[1], revenue_entry[3])]
     except Exception as e:
@@ -34,7 +35,7 @@ revenue_by_skin.sort(key = lambda tup: tup[1], reverse = True)
 
 
 def datediff(d1, d2):
-    """gibt die Differenz zwischen 2 Tagen zurück"""
+    """gibt die Differenz zwischen 2 Tagen im Format D/M/Y zurück"""
 
     d1 = datetime.strptime(d1, "%d/%m/%Y")
     d2 = datetime.strptime(d2, "%d/%m/%Y")
@@ -45,6 +46,7 @@ def datediff(d1, d2):
 # den Vergangen Tagen beinhaltet
 cumulated_revenue_by_rent_time={}
 for val, name in zip(rent_dict.values(), rent_dict.keys()):
+    # val ist ("date time", revenue), name ist Itemname
     if reverse == False: val.reverse()
     for entry in val:
         try:
@@ -59,6 +61,7 @@ cumulated_revenue_by_rent_time_from_first={}
 # 7 skins werden ignoriert.
 start = False
 for val, name in zip(rent_dict.values(), rent_dict.keys()):
+    # val ist ("date time", revenue), name ist Itemname
     # schneidet somit die ältesten 7 Items ab, da nach diesen über 7 Monate nichts kommt
     # Somit wird das Diagramm sehr viel übersichtlicher.
     # im Reverse Fall so, ansonsten break nach dem Namen.
@@ -66,7 +69,8 @@ for val, name in zip(rent_dict.values(), rent_dict.keys()):
         start = True
         if reverse: continue
         else: break
-    if start == True:
+    # da das Stiletto Knife Doppler noch vor der Mp7 Fade auftaucht.
+    if start == True or name == "★ Stiletto Knife | Doppler (Factory New)":
         if reverse == False: val.reverse()
         for entry in val:
             try:
@@ -91,14 +95,19 @@ def analyse_revenue_by_type(includes_KGD: bool = True):
 
     return revenue_by_type
 
+def get_data_of_skin(name):
+    return cumulated_revenue_by_rent_time_from_first[name]
 
 if __name__ == "__main__":
-    plt.plot(xs, ys)
-    plt.show()
+    #plt.plot(xs, ys)
+    #plt.show()
     #pprint(revenue_by_skin)
     #print(rent_dict.keys())
-    for item in cumulated_revenue_by_rent_time_from_first.values():
-        print(item)
+    for item in cumulated_revenue_by_rent_time_from_first:
+        #print(item)
         pass
-    pass
+
+    print(get_data_of_skin("★ Stiletto Knife | Doppler (Factory New)"))
+    pprint(revenue_by_skin)
+    #pass
     # pprint(analyse_revenue_by_type())

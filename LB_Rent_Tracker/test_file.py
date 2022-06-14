@@ -1,4 +1,5 @@
 import pandas as pd
+import datetime
 from pprint import pprint
 """
 test_lst = [['15826354', '26/3/2022 9:46 AM', '★ Karambit | Scorched (Minimal Wear)', '$0.27']]
@@ -56,7 +57,7 @@ for number, letter in enumerate(lst):
     except:
         dt[letter] = {"test": number}
 
-print(dt)"""
+print(dt)
 
 import csv
 
@@ -70,4 +71,7 @@ with open('test_csv.csv', 'w') as update:
     for line in reader:
         writer.writerow(line)
 
-print(float("$0.4".strip("$")))
+print(float("$0.4".strip("$")))"""
+date = "2022-01-31"
+next_day = str(datetime.datetime.strptime(date, "%Y-%m-%d").date() + datetime.timedelta(days=1))
+print(next_day)
