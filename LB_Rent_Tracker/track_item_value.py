@@ -1,6 +1,9 @@
 import requests
+from bs4 import BeautifulSoup
+from lxml import etree
+import csv
 
-iem_name_scmlink = {'★ Karambit | Gamma Doppler (Factory New)': {'link': 'https://steamcommunity.com/market/listings/730/%E2%98%85%20Karambit%20%7C%20Gamma%20Doppler%20%28Factory%20New%29', 'start': '2021-06-14', 'end': None},
+item_name_scmlink = {'★ Karambit | Gamma Doppler (Factory New)': {'link': 'https://steamcommunity.com/market/listings/730/%E2%98%85%20Karambit%20%7C%20Gamma%20Doppler%20%28Factory%20New%29', 'start': '2021-06-14', 'end': None},
  '★ Karambit | Lore (Field-Tested)': {'link': 'https://steamcommunity.com/market/listings/730/%E2%98%85%20Karambit%20%7C%20Lore%20%28Field-Tested%29', 'start': '2021-03-07', 'end': None},
  '★ Skeleton Knife | Slaughter (Minimal Wear)': {'link': 'https://steamcommunity.com/market/listings/730/%E2%98%85%20Skeleton%20Knife%20%7C%20Slaughter%20%28Minimal%20Wear%29', 'start': '', 'end': ''},
  '★ Stiletto Knife | Doppler (Factory New)': {'link': 'https://steamcommunity.com/market/listings/730/%E2%98%85%20Stiletto%20Knife%20%7C%20Doppler%20%28Factory%20New%29','start': '', 'end': ''},
@@ -31,19 +34,21 @@ data = requests.get('http://steamcommunity.com/market/pricehistory/?country=US&c
 print(data.text)
 
 
-from bs4 import BeautifulSoup
+for item in item_name_scmlink.items():
+    itemname = item[0]
+    websitedata = requests.get(item[1]['link'])
+    data = BeautifulSoup(websitedata.text)
+    #content = data.find(id="responsive_page_template_content")
 
-data2 = requests.get('https://steamcommunity.com/market/listings/730/Falchion%20Case')
-soup = BeautifulSoup(data2.text)
-content = soup.find(id="responsive_page_template_content")
-#print(content)
-print(type(content))
+    dom = etree.HTML(str(data))
+    content2 = dom.xpath('//*[@id="responsive_page_template_content"]/script[2]')[0].text.split("line1")[1].split("[[")[1].split("]]")[0]
 
-from lxml import etree
+    with open(f"item_values_by_date/{itemname}.csv", "w", newline='') as f:
+        writer = csv.writer(f, delimiter='§', escapechar="", quoting=csv.QUOTE_NONE)
+        for entry in content2.split("],["):
+            if [entry] != entry.split("01:"):
+                writer.writerow([entry[1:-1].replace("\"", "")])
 
-dom = etree.HTML(str(soup))
-content2 = dom.xpath('//*[@id="responsive_page_template_content"]/script[2]')[0].text.split("line1")[1].split("[[")[1].split("]]")[0]
-print(content2)
 
 
 

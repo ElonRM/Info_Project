@@ -72,6 +72,13 @@ with open('test_csv.csv', 'w') as update:
         writer.writerow(line)
 
 print(float("$0.4".strip("$")))"""
+"""
 date = "2022-01-31"
 next_day = str(datetime.datetime.strptime(date, "%Y-%m-%d").date() + datetime.timedelta(days=1))
-print(next_day)
+print(next_day)"""
+
+print("hallo".split("sfsf"))
+print(["hallo"] == "hallo".split("pdfd"))
+
+
+print(["sfsfg"][0][1:-1])
