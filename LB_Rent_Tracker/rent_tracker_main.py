@@ -93,7 +93,7 @@ def update_data():
             i += 1
         except Exception as e:
             sleep(1)
-            #print(e)
+            print(e)
 
     ''' with open('test_csv.csv', 'a') as update:
         writer = csv.writer(update)

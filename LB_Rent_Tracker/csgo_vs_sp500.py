@@ -6,12 +6,7 @@ import numpy as np
 
 import plotly.graph_objs as go
 
-#def split_index(str):
-#    return str.split(" ")[0]
-
-data = pd.DataFrame(yf.download("^GSPC", period="380d", interval="1d"))
-#data.index = data.index.map(str).map(split_index)
-
+snp_data = pd.DataFrame(yf.download("^GSPC", period="380d", interval="1d"))
 
 with open('investments.csv', newline='') as f:
     reader = csv.reader(f)
@@ -28,32 +23,32 @@ def get_previous_trade_day(date: str) -> str:
     """returns the previous day when the stock market was open to trade"""
     prevdate = prev_day(date)
     try:
-        data.loc[prevdate]
+        snp_data.loc[prevdate]
         return prevdate
     except:
         return get_previous_trade_day(prevdate)
 def get_next_trade_day(date: str) -> str:
     """returns the next day when the stock market was open to trade"""
     try:
-        data.loc[date]
+        snp_data.loc[date]
         return date
     except:
         return get_previous_trade_day(next_day(date))
 
-data["S&P_Gain"] = data["Close"]/data.loc[get_next_trade_day(investments[0][0]),"Open"]
-data["Invested_today"] = 0
-data["Invested"] = 0
-data["Investment_Value"] = 0
-data["Investment_Gain"] = 0
+snp_data["S&P_Gain"] = snp_data["Close"]/snp_data.loc[get_next_trade_day(investments[0][0]),"Open"]
+snp_data["Invested_today"] = 0
+snp_data["Invested"] = 0
+snp_data["Investment_Value"] = 0
+snp_data["Investment_Gain"] = 0
 # Alle Tage des S&P500 Kurses vor dem ersten Kauf werden ausgeblendet
-data.loc[data.index <= get_next_trade_day(investments[0][0]), 'S&P_Gain'] = np.NaN
+snp_data.loc[snp_data.index <= get_next_trade_day(investments[0][0]), 'S&P_Gain'] = np.NaN
 
 
 def add_investment(date:str, amount:float) -> None:
     """Es wird das Investment im Dataframe vermerkt. Ist an dem Tag, an dem ein Skin gekauft wurde
     die Börse geschlossen, so wird der Eintrag am daraufkommenden Börsentag eingetragen"""
     try:
-        data.loc[date, "Invested_today"] += int(amount)
+        snp_data.loc[date, "Invested_today"] += int(amount)
     except:
         nextday = next_day(date)
         add_investment(nextday, amount)
@@ -64,26 +59,26 @@ for invest in investments:
     # invest ist [date, amount]
     add_investment(invest[0], invest[1])
 
-data["Invested"] = data["Invested_today"].cumsum()
+snp_data["Invested"] = snp_data["Invested_today"].cumsum()
 
 
 # ADDING INVESTMENT VALUE DATA
-for i, index in enumerate(data.index):
+for i, index in enumerate(snp_data.index):
     index = str(index.date())
 
-    todays_gain = data.loc[index, "Close"]/data.loc[index, "Open"]
+    todays_gain = snp_data.loc[index, "Close"]/snp_data.loc[index, "Open"]
 
     # Für den ersten Tag gibt es keinen vorherigen Handelstag
     # Daher würde hier eine unendliche Rekursion in der get_previous_trade_day Funktion entstehen
     if i != 0:
         previous_trade_day = get_previous_trade_day(index)
-        gain_since_prev_day_close = data.loc[index, "Close"]/data.loc[previous_trade_day, "Close"]
-        data.loc[index, "Investment_Value"]  = data.loc[previous_trade_day, "Investment_Value"] * gain_since_prev_day_close + data.loc[index, "Invested_today"] * todays_gain
+        gain_since_prev_day_close = snp_data.loc[index, "Close"]/snp_data.loc[previous_trade_day, "Close"]
+        snp_data.loc[index, "Investment_Value"]  = snp_data.loc[previous_trade_day, "Investment_Value"] * gain_since_prev_day_close + snp_data.loc[index, "Invested_today"] * todays_gain
     else:
-        data.loc[index, "Investment_Value"] = data.loc[index, "Invested_today"] * todays_gain
+        snp_data.loc[index, "Investment_Value"] = snp_data.loc[index, "Invested_today"] * todays_gain
 
 #INVESTMENT GAIN DATA
-data["Investment_Gain"] = data["Investment_Value"]/data["Invested"]
+snp_data["Investment_Gain"] = snp_data["Investment_Value"]/snp_data["Invested"]
 
 """
 fig = go.Figure()
@@ -158,7 +153,7 @@ df["ROI"] = df["Cumulated_Revenue"]/df["Invested"]+1
 
 import plotly.express as px
 
-fig = px.line(data, x=data.index, y=["Investment_Gain", "S&P_Gain"])
+fig = px.line(snp_data, x=snp_data.index, y=["Investment_Gain", "S&P_Gain"])
 
 investment_days = list(set(investment[0] for investment in investments))
 for investment in investment_days:
@@ -174,9 +169,14 @@ fig.update_xaxes(
         buttons=list([
             dict(count=30, label="1m", step="day", stepmode="backward"),
             dict(count=6, label="6m", step="month", stepmode="backward"),
+            dict(count=1, label="1y", step="year", stepmode="backward"),
             dict(step="all")
         ])
     )
 )
 
 fig.show()
+
+
+for i in range(10):
+    pass
