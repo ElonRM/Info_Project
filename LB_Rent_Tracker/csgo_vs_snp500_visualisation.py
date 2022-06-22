@@ -5,13 +5,7 @@ from datetime import datetime
 from track_item_value import item_name_scmlink
 
 today = datetime64(datetime.now())
-base_df = pd.DataFrame({'Date': pd.date_range('2021-01-01', today)})
 merged_df = pd.DataFrame({'Date': pd.date_range('2021-01-01', today)})
-
-example = {
-    '★ Bayonet | Black Laminate (Minimal Wear)': {'link': 'https://steamcommunity.com/market/listings/730/%E2%98%85%20Bayonet%20%7C%20Black%20Laminate%20%28Minimal%20Wear%29', 'start': '2021-09-11', 'end': today},
-    '★ Bayonet | Freehand (Field-Tested)': {'link': 'https://steamcommunity.com/market/listings/730/%E2%98%85%20Bayonet%20%7C%20Freehand%20%28Field-Tested%29','start': '2021-04-23', 'end': today}
-    }
 
 skin_df = pd.read_csv('item_values_by_date/★ Bayonet | Black Laminate (Minimal Wear).csv', names=["Date", "Value", "TradingVolume"])
 skin_df2 = pd.read_csv('item_values_by_date/★ Bayonet | Freehand (Field-Tested).csv', names=["Date", "Value", "TradingVolume"])
@@ -27,7 +21,6 @@ rent_df['Date'] = pd.to_datetime(rent_df['Date'])
 rent_df = rent_df.groupby(['Date']).mean()
 rent_df = rent_df[['ROI', 'Cumulated_Revenue']]
 rent_df = rent_df.rename(columns={"ROI": "ROI_Renting"})
-print(rent_df)
 
 def convert_df_to_wanted_format(df: pd.DataFrame, start, end):
     df['Date']=df['Date'].apply(lambda x: x[:-7])
