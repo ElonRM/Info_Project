@@ -111,3 +111,6 @@ if __name__ == "__main__":
     pprint(revenue_by_skin)
     #pass
     # pprint(analyse_revenue_by_type())
+
+def get_alltime_revenue_by_date():
+    pass

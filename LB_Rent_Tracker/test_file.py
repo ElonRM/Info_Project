@@ -1,5 +1,5 @@
 import pandas as pd
-import datetime
+from datetime import datetime
 from pprint import pprint
 """
 test_lst = [['15826354', '26/3/2022 9:46 AM', '★ Karambit | Scorched (Minimal Wear)', '$0.27']]
@@ -82,3 +82,11 @@ print(["hallo"] == "hallo".split("pdfd"))
 
 
 print(["sfsfg"][0][1:-1])
+
+print(type(datetime.today()))
+
+rent_df = pd.read_csv('tables/lootbear_revenue_data.csv')
+rent_df['Date'] = pd.to_datetime(rent_df['Date'])
+print(rent_df)
+rent_df = rent_df.groupby(['Date']).mean()
+print(rent_df)

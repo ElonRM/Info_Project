@@ -177,6 +177,5 @@ fig.update_xaxes(
 
 fig.show()
 
-
-for i in range(10):
-    pass
+df.to_csv('tables/lootbear_revenue_data.csv')
+snp_data.to_csv('tables/snp500_data.csv')
