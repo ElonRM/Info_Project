@@ -33,10 +33,7 @@ def convert_df_to_wanted_format(df: pd.DataFrame, start, end):
     df['Date']=df['Date'].apply(lambda x: x[:-7])
     df['Date']=pd.to_datetime(df['Date'].apply(lambda x: datetime.strftime(datetime.strptime(x, '%b %d %Y'), '%Y-%m-%d')))
     df = df[df['Date'].between(start, end)]
-    #df['rolling_avg'] = df['Value'].rolling(window=5, min_periods=1).mean()
-    #df['Invested'] = df['Value']
     df.loc[df['Date'] == start, 'Invested'] = df.loc[df.index[df['Date'] == start], "Value"]
-    #df.loc[min(df.index[df["Date"] == date]), "Invested"] += int(amount)
 
     return df
 
@@ -44,12 +41,8 @@ for item in item_name_scmlink.items():
     temp_df = pd.DataFrame({'Date': pd.date_range('2021-01-01', today)})
     df = pd.read_csv(f'/Users/timehmann/Documents/Programmieren/VSCode/Python/SmallProjects/Info_Project/item_values_by_date/{item[0]}.csv', names=["Date", "Value", "TradingVolume"])
     df = convert_df_to_wanted_format(df, item[1]['start'], item[1]['end'])
-    #print(df)
     temp_df = temp_df.join(df.set_index('Date'), on='Date')
     temp_df = temp_df.fillna(method='ffill')
-    #print(item[0])
-    #print(temp_df)
-    #df_merged = base_df.set_index('Date').join(df.set_index('Date'))
     merged_df = pd.concat([merged_df, temp_df]).groupby(['Date']).sum().reset_index()
 
 
@@ -67,18 +60,15 @@ import plotly.graph_objs as go
 
 fig = px.line(merged_df, x=merged_df['Date'], y=["S&P_Investing_Gain", "S&P_Gain", "ROI_Skins", "ROI_Skins+Rent", "ROI_Renting"])
 
+"""
 with open('investments.csv', newline='') as f:
     reader = csv.reader(f)
     investments = list(reader)
 
 investment_days = list(set(investment[0] for investment in investments))
 for investment in investment_days:
-    #fig.add_vline(x=investment, line_width=1.5, line_dash="dash", line_color="green")
-    pass
-#sfig.add_hrect(y0=0.85, y1=1, line_width=0, fillcolor="red", opacity=0.2)
-
-#fig.add_trace(go.Scatter(x=df["Date"], y=df["ROI"], name = "Skin Renting ROI - excluding Skin Value"))
-
+    fig.add_vline(x=investment, line_width=1.5, line_dash="dash", line_color="green")
+"""
 
 fig.update_xaxes(
     rangeslider_visible=True,
