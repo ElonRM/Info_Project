@@ -13,8 +13,8 @@ example = {
     '★ Bayonet | Freehand (Field-Tested)': {'link': 'https://steamcommunity.com/market/listings/730/%E2%98%85%20Bayonet%20%7C%20Freehand%20%28Field-Tested%29','start': '2021-04-23', 'end': today}
     }
 
-skin_df = pd.read_csv('/Users/timehmann/Documents/Programmieren/VSCode/Python/SmallProjects/Info_Project/item_values_by_date/★ Bayonet | Black Laminate (Minimal Wear).csv', names=["Date", "Value", "TradingVolume"])
-skin_df2 = pd.read_csv('/Users/timehmann/Documents/Programmieren/VSCode/Python/SmallProjects/Info_Project/item_values_by_date/★ Bayonet | Freehand (Field-Tested).csv', names=["Date", "Value", "TradingVolume"])
+skin_df = pd.read_csv('item_values_by_date/★ Bayonet | Black Laminate (Minimal Wear).csv', names=["Date", "Value", "TradingVolume"])
+skin_df2 = pd.read_csv('item_values_by_date/★ Bayonet | Freehand (Field-Tested).csv', names=["Date", "Value", "TradingVolume"])
 
 snp_df = pd.read_csv('tables/snp500_data.csv')
 rent_df = pd.read_csv('tables/lootbear_revenue_data.csv')
@@ -39,7 +39,7 @@ def convert_df_to_wanted_format(df: pd.DataFrame, start, end):
 
 for item in item_name_scmlink.items():
     temp_df = pd.DataFrame({'Date': pd.date_range('2021-01-01', today)})
-    df = pd.read_csv(f'/Users/timehmann/Documents/Programmieren/VSCode/Python/SmallProjects/Info_Project/item_values_by_date/{item[0]}.csv', names=["Date", "Value", "TradingVolume"])
+    df = pd.read_csv(f'item_values_by_date/{item[0]}.csv', names=["Date", "Value", "TradingVolume"])
     df = convert_df_to_wanted_format(df, item[1]['start'], item[1]['end'])
     temp_df = temp_df.join(df.set_index('Date'), on='Date')
     temp_df = temp_df.fillna(method='ffill')
