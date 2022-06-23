@@ -105,39 +105,26 @@ def get_calculated_return_per_year(name):
     revenue = cumulated_revenue_by_rent_time[name]['revenue_history'][-1][-1]
     dates = cumulated_revenue_by_rent_time[name]['revenue_history'][-1][0]
     price = float(name_price_df[name_price_df['Name'] == name]['Price'].sum())
-    print(name, revenue, dates)
-    #print(name_price_df[name_price_df['Name'] == name]['Price'].mean())
     return ((365/dates*revenue)/price, dates, price) if price != 0 else (NaN, NaN, NaN)
 
 def show_expected_revenue_per_year(df: pd.DataFrame):
     df['Trust']=df['Data_Size'].apply(lambda x: x**(1/2)/25)
     df['Category'] = df['Name'].apply(lambda x: x.replace('StatTrak™ ', '').split('|')[0])
     category_df = df.groupby(['Category']).mean().reset_index()
-    print(category_df)
 
-    #fig = px.bar(df, x="Name", y="RPY", color = "Price", title="Expected ROI per Year")
-    #fig = px.bar(df, x="Name", y="RPY", color = "Trust", color_continuous_scale='Bluered_r', title="Expected ROI per Year")
-    fig = px.bar(category_df, x="Category", y="RPY", color = "Trust", color_continuous_scale='Bluered_r', title="Expected ROI per Year")
+    fig1 = px.bar(df, x="Name", y="RPY", color = "Price", title="Expected ROI per Year").update_layout(font=dict(size=8))
+    fig2 = px.bar(df, x="Name", y="RPY", color = "Trust", color_continuous_scale='Bluered_r', title="Expected ROI per Year").update_layout(font=dict(size=8))
+    fig3 = px.bar(category_df, x="Category", y="RPY", color = "Trust", color_continuous_scale='Bluered_r', title="Expected ROI per Year").update_layout(font=dict(size=8))
     
-    fig.show()
+    fig1.show()
+    fig2.show()
+    fig3.show()
 
-if __name__ == "__main__":
-    #plt.plot(xs, ys)
-    #plt.show()
-    #pprint(revenue_by_skin)
-    #print(rent_dict.keys())
-    for item in cumulated_revenue_by_rent_time_from_first:
-        #print(item)
+return_per_year_df = pd.DataFrame(columns=['Name', 'RPY', 'Data_Size', 'Price'])
+for skinname in cumulated_revenue_by_rent_time.keys():
+    rpy, datasize, price = get_calculated_return_per_year(skinname)
+    if not math.isnan(rpy):
+        return_per_year_df.loc[len(return_per_year_df)] = [skinname, rpy, datasize, price]
         pass
 
-    #pass
-    # pprint(analyse_revenue_by_type())
-    return_per_year_df = pd.DataFrame(columns=['Name', 'RPY', 'Data_Size', 'Price'])
-    for skinname in cumulated_revenue_by_rent_time.keys():
-        rpy, datasize, price = get_calculated_return_per_year(skinname)
-        if not math.isnan(rpy):
-            return_per_year_df.loc[len(return_per_year_df)] = [skinname, rpy, datasize, price]
-            pass
-
-    print(return_per_year_df)
-    show_expected_revenue_per_year(return_per_year_df)
+show_expected_revenue_per_year(return_per_year_df)
