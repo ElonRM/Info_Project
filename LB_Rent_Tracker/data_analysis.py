@@ -107,13 +107,18 @@ def get_calculated_return_per_year(name):
     price = float(name_price_df[name_price_df['Name'] == name]['Price'].sum())
     print(name, revenue, dates)
     #print(name_price_df[name_price_df['Name'] == name]['Price'].mean())
-    return ((365/dates*revenue)/price, dates) if price != 0 else (NaN, NaN)
+    return ((365/dates*revenue)/price, dates, price) if price != 0 else (NaN, NaN, NaN)
 
 def show_expected_revenue_per_year(df: pd.DataFrame):
     df['Trust']=df['Data_Size'].apply(lambda x: x**(1/2)/25)
-    print(df['Trust'])
-    fig = px.scatter(df, x="RPY", y="Trust", color = "Trust", title="Expected ROI per Year")
-    fig = px.bar(df, x="Name", y="RPY", color = "Trust", title="Expected ROI per Year")
+    df['Category'] = df['Name'].apply(lambda x: x.replace('StatTrak™ ', '').split('|')[0])
+    category_df = df.groupby(['Category']).mean().reset_index()
+    print(category_df)
+
+    #fig = px.bar(df, x="Name", y="RPY", color = "Price", title="Expected ROI per Year")
+    #fig = px.bar(df, x="Name", y="RPY", color = "Trust", color_continuous_scale='Bluered_r', title="Expected ROI per Year")
+    fig = px.bar(category_df, x="Category", y="RPY", color = "Trust", color_continuous_scale='Bluered_r', title="Expected ROI per Year")
+    
     fig.show()
 
 if __name__ == "__main__":
@@ -127,11 +132,11 @@ if __name__ == "__main__":
 
     #pass
     # pprint(analyse_revenue_by_type())
-    return_per_year_df = pd.DataFrame(columns=['Name', 'RPY', 'Data_Size'])
+    return_per_year_df = pd.DataFrame(columns=['Name', 'RPY', 'Data_Size', 'Price'])
     for skinname in cumulated_revenue_by_rent_time.keys():
-        rpy, datasize = get_calculated_return_per_year(skinname)
+        rpy, datasize, price = get_calculated_return_per_year(skinname)
         if not math.isnan(rpy):
-            return_per_year_df.loc[len(return_per_year_df)] = [skinname, rpy, datasize]
+            return_per_year_df.loc[len(return_per_year_df)] = [skinname, rpy, datasize, price]
             pass
 
     print(return_per_year_df)
