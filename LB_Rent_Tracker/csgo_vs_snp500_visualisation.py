@@ -2,7 +2,9 @@ from heapq import merge
 from numpy import datetime64
 import pandas as pd
 from datetime import datetime
-from track_item_value import item_name_scmlink
+try:
+    from LB_Rent_Tracker.track_item_value import item_name_scmlink
+except: from track_item_value import item_name_scmlink
 
 today = datetime64(datetime.now())
 merged_df = pd.DataFrame({'Date': pd.date_range('2021-01-01', today)})
@@ -53,9 +55,9 @@ import plotly.express as px
 import csv
 import plotly.graph_objs as go
 
-#fig = px.line(merged_df, x=merged_df['Date'], y=["S&P_Gain",  "ROI_Renting"])
-#fig = px.line(merged_df, x=merged_df['Date'], y=["S&P_Gain", "ROI_Renting", "S&P_Investing_Gain", "ROI_Skins"])
-fig = px.line(merged_df, x=merged_df['Date'], y=["S&P_Gain",  "ROI_Renting", "S&P_Investing_Gain", "ROI_Skins", "ROI_Skins+Rent"])
+fig1 = px.line(merged_df, x=merged_df['Date'], y=["S&P_Gain",  "ROI_Renting"])
+fig2 = px.line(merged_df, x=merged_df['Date'], y=["S&P_Gain", "ROI_Renting", "S&P_Investing_Gain", "ROI_Skins"])
+fig3 = px.line(merged_df, x=merged_df['Date'], y=["S&P_Gain",  "ROI_Renting", "S&P_Investing_Gain", "ROI_Skins", "ROI_Skins+Rent"])
 
 """
 with open('investments.csv', newline='') as f:
@@ -66,19 +68,23 @@ investment_days = list(set(investment[0] for investment in investments))
 for investment in investment_days:
     fig.add_vline(x=investment, line_width=1.5, line_dash="dash", line_color="green")
 """
-
-fig.update_xaxes(
-    rangeslider_visible=True,
-    rangeselector=dict(
-        buttons=list([
-            dict(count=30, label="1m", step="day", stepmode="backward"),
-            dict(count=6, label="6m", step="month", stepmode="backward"),
-            dict(count=1, label="1y", step="year", stepmode="backward"),
-            dict(step="all")
-        ])
+def add_slider(fig):
+    fig.update_xaxes(
+        rangeslider_visible=True,
+        rangeselector=dict(
+            buttons=list([
+                dict(count=30, label="1m", step="day", stepmode="backward"),
+                dict(count=6, label="6m", step="month", stepmode="backward"),
+                dict(count=1, label="1y", step="year", stepmode="backward"),
+                dict(step="all")
+            ])
+        )
     )
-)
 
-fig.show()
-pd.set_option('display.max_rows', 50)
-print(merged_df.head(n=267))
+add_slider(fig1)
+add_slider(fig2)
+add_slider(fig3)
+
+fig1.show()
+fig2.show()
+fig3.show()
