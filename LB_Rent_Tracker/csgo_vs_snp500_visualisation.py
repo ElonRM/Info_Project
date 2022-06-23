@@ -43,15 +43,19 @@ merged_df = merged_df.join(snp_df, on='Date')
 merged_df = merged_df.join(rent_df, on='Date')
 merged_df = merged_df.fillna(method='ffill')
 
-merged_df['Value_rolling_avg'] = merged_df['Value'].rolling(window=10, min_periods=1).mean()
-merged_df['ROI_Skins'] = merged_df['Value_rolling_avg']/merged_df['Invested'].rolling(window=10, min_periods=1).mean()
-merged_df['ROI_Skins+Rent'] = (merged_df['Value_rolling_avg']+merged_df['Cumulated_Revenue'])/merged_df['Invested'].rolling(window=10, min_periods=1).mean()
+moving_average_window = 10
+
+merged_df['Value_rolling_avg'] = merged_df['Value'].rolling(window=moving_average_window, min_periods=1).mean()
+merged_df['ROI_Skins'] = merged_df['Value_rolling_avg']/merged_df['Invested'].rolling(window=moving_average_window, min_periods=1).mean()
+merged_df['ROI_Skins+Rent'] = (merged_df['Value_rolling_avg']+merged_df['Cumulated_Revenue'])/merged_df['Invested'].rolling(window=moving_average_window, min_periods=1).mean()
 
 import plotly.express as px
 import csv
 import plotly.graph_objs as go
 
-fig = px.line(merged_df, x=merged_df['Date'], y=["S&P_Investing_Gain", "S&P_Gain", "ROI_Skins", "ROI_Skins+Rent", "ROI_Renting"])
+#fig = px.line(merged_df, x=merged_df['Date'], y=["S&P_Gain",  "ROI_Renting"])
+#fig = px.line(merged_df, x=merged_df['Date'], y=["S&P_Gain", "ROI_Renting", "S&P_Investing_Gain", "ROI_Skins"])
+fig = px.line(merged_df, x=merged_df['Date'], y=["S&P_Gain",  "ROI_Renting", "S&P_Investing_Gain", "ROI_Skins", "ROI_Skins+Rent"])
 
 """
 with open('investments.csv', newline='') as f:

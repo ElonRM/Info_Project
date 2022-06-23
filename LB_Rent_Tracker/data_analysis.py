@@ -2,10 +2,16 @@ import csv
 from pprint import pprint
 from datetime import datetime
 import matplotlib.pyplot as plt
+from numpy import NaN
+import pandas as pd
+import math
+import plotly.express as px
 
 with open('rent_revenue_data.csv', newline='') as f:
     reader = csv.reader(f)
     data = list(reader)
+
+name_price_df = pd.read_csv('Einkaufspreise.csv', names=['Name', "Price"])
 
 # entfernen der Kopfzeile
 ### [ID, DATE, ITEM, REVENUE]
@@ -19,7 +25,7 @@ if reverse == True: data.reverse()
 
 #print(data)
 rent_dict = {}
-# rent_dict has the name of an item as the key and a list of tuples (date, revenue) as value
+# rent_dict hat den Namen eines Items als Key und eine Liste an Tupeln (date, revenue) als value
 for revenue_entry in data:
     # revenue_entry ist ein Liste aus [ID, DATE, ITEM, REVENUE]
     try:
@@ -31,7 +37,6 @@ for revenue_entry in data:
 # revenue_by_skin ist eine Liste für die summierte Einnahme pro Skin
 revenue_by_skin=[(name, round(sum(float(entry[1]) for entry in val), 2)) for val, name in zip(rent_dict.values(), rent_dict.keys())]
 revenue_by_skin.sort(key = lambda tup: tup[1], reverse = True)
-#pprint(revenue_by_skin)
 
 
 def datediff(d1, d2):
@@ -95,8 +100,21 @@ def analyse_revenue_by_type(includes_KGD: bool = True):
 
     return revenue_by_type
 
-def get_data_of_skin(name):
-    return cumulated_revenue_by_rent_time_from_first[name]
+def get_calculated_return_per_year(name):
+
+    revenue = cumulated_revenue_by_rent_time[name]['revenue_history'][-1][-1]
+    dates = cumulated_revenue_by_rent_time[name]['revenue_history'][-1][0]
+    price = float(name_price_df[name_price_df['Name'] == name]['Price'].sum())
+    print(name, revenue, dates)
+    #print(name_price_df[name_price_df['Name'] == name]['Price'].mean())
+    return ((365/dates*revenue)/price, dates) if price != 0 else (NaN, NaN)
+
+def show_expected_revenue_per_year(df: pd.DataFrame):
+    df['Trust']=df['Data_Size'].apply(lambda x: x**(1/2)/25)
+    print(df['Trust'])
+    fig = px.scatter(df, x="RPY", y="Trust", color = "Trust", title="Expected ROI per Year")
+    fig = px.bar(df, x="Name", y="RPY", color = "Trust", title="Expected ROI per Year")
+    fig.show()
 
 if __name__ == "__main__":
     #plt.plot(xs, ys)
@@ -107,10 +125,14 @@ if __name__ == "__main__":
         #print(item)
         pass
 
-    print(get_data_of_skin("★ Stiletto Knife | Doppler (Factory New)"))
-    pprint(revenue_by_skin)
     #pass
     # pprint(analyse_revenue_by_type())
+    return_per_year_df = pd.DataFrame(columns=['Name', 'RPY', 'Data_Size'])
+    for skinname in cumulated_revenue_by_rent_time.keys():
+        rpy, datasize = get_calculated_return_per_year(skinname)
+        if not math.isnan(rpy):
+            return_per_year_df.loc[len(return_per_year_df)] = [skinname, rpy, datasize]
+            pass
 
-def get_alltime_revenue_by_date():
-    pass
+    print(return_per_year_df)
+    show_expected_revenue_per_year(return_per_year_df)
